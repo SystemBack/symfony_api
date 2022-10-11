@@ -1,0 +1,61 @@
+version: '3.5'
+
+services:
+  api-web:
+    container_name: api-web
+    build:
+      context: ./docker/nginx
+      args:
+        UID: $U_ID
+    ports:
+      - 8080:80
+    volumes:
+      - ./public:/appdata/www/public
+    depends_on:
+      - api-php
+    networks:
+      - api-network
+
+  api-php:
+    container_name: api-php
+    build:
+      context: ./docker/php
+      args:
+        UID: $U_ID
+    environment:
+      PHP_IDE_CONFIG: serverName=Docker
+      PHP_XDEBUG_ENABLED: 1
+      XDEBUG_CONFIG: remote_host=172.17.0.1 remote_port=9005
+      #XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9005
+    volumes:
+      - ./:/appdata/www
+      - ./docker/php/xdebug-linux.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      #- ./docker/php/xdebug-macos.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ~/.ssh/id_rsa/:/home/appuser/.ssh/id_rsa
+    depends_on:
+      - api-db
+    networks:
+      - api-network
+
+  api-db:
+    container_name: api-db
+    image: mysql:8.0
+    ports:
+      - 3500:3306
+    environment:
+      MYSQL_DATABASE: api_db
+      MYSQL_USER: user
+      MYSQL_PASSSWORD: password
+      MYSQL_ROOT_PASSSWORD: root
+    command: mysqld --sql_mode="STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION"
+    volumes:
+      - api-db-data:/var/lib/mysql
+    networks:
+      - api-network
+
+volumes:
+  api-db-data:
+
+networks:
+  api-network:
+    external: true

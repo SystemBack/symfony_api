@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+  api-web:
+    container_name: api-web
+    bould:
+      context: ./docker/nginx
+      args:
+        UID: $U_ID
+      ports:
+        - 8080:80
+      volumes:
+        - ./public:/appdata/www/public
+      depends_on:
+        - api-be
+      networks:
+        - api-network
+
+  api-php:
+    container_name: api-php
+    bould:
+      context: docker
