@@ -35,16 +35,16 @@ prepare:
 	${MAKE} composer-install
 
 composer-install:
-	U_ID=${UID} dcker exec --user -${UID} -it ${DOCKER_PHP} composer install --no-scripts --no-iteration --optimize-autoloader
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} composer install --no-scripts --no-iteration --optimize-autoloader
 
 migrations:
-	U_ID=${UID} dcker exec --user -${UID} -it ${DOCKER_PHP} bin/console docktine:migrations:migrate -n
+	U_ID=${UID} docker exec -it --user ${UID}${DOCKER_PHP} bin/console docktine:migrations:migrate -n
 
 php-logs:
-	U_ID=${UID} dcker exec --user -${UID} -it ${DOCKER_PHP} tail -f var/log/dev.log
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} tail -f var/log/dev.log
 
 ssh-php:
-	U_ID=${UID} dcker exec --user -${UID} -it ${DOCKER_PHP} bash
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bash
 
 php-fix:
-	U_ID=${UID} dcker exec --user -${UID} -it ${DOCKER_PHP} php-cs-fixer fix src --rules=@Symfony
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} php-cs-fixer fix src --rules=@Symfony
