@@ -1,5 +1,5 @@
 api/.env
-
+*/.idea/*
 
 ###> symfony/framework-bundle ###
 api/.env.local
